@@ -345,3 +345,16 @@ If you find our paper and code useful for your research, please consider giving 
 }
 ```
 
+## Conda environment, quick test deployment
+
+To copy environment: 
+
+```bash
+conda env create -f environment.yml
+```
+
+To run demo:
+
+```bash
+python tools/demo.py --weights runs/BddDataset/_2023-03-24-09-39/epoch-817.pth --source DATASET_2/img/val --save-dir results_fin3 --conf-thres 0.35
+```
