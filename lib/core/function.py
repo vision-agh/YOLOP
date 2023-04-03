@@ -146,7 +146,7 @@ def validate(epoch,config, val_loader, val_dataset, model, criterion, output_dir
     save_hybrid=False
     log_imgs,wandb = min(16,100), None
 
-    nc = 1
+    nc = 5
     iouv = torch.linspace(0.5,0.95,10).to(device)     #iou vector for mAP@0.5:0.95
     niou = iouv.numel()
 
@@ -300,7 +300,7 @@ def validate(epoch,config, val_loader, val_dataset, model, criterion, output_dir
                             #print(cls)
                             label_det_pred = f'{names[int(cls)]} {conf:.2f}'
                             plot_one_box(xyxy, img_det , label=label_det_pred, color=colors[int(cls)], line_thickness=3)
-                        cv2.imwrite(save_dir+"/batch_{}_{}_det_pred.png".format(epoch,i),img_det)
+                        # cv2.imwrite(save_dir+"/batch_{}_{}_det_pred.png".format(epoch,i),img_det) #TODO: UNCOMMENT
 
                         labels = target[0][target[0][:, 0] == i, 1:]
                         # print(labels)
@@ -313,7 +313,7 @@ def validate(epoch,config, val_loader, val_dataset, model, criterion, output_dir
                             label_det_gt = f'{names[int(cls)]}'
                             xyxy = (x1,y1,x2,y2)
                             plot_one_box(xyxy, img_gt , label=label_det_gt, color=colors[int(cls)], line_thickness=3)
-                        cv2.imwrite(save_dir+"/batch_{}_{}_det_gt.png".format(epoch,i),img_gt)
+                        # cv2.imwrite(save_dir+"/batch_{}_{}_det_gt.png".format(epoch,i),img_gt) #TODO: UNCOMMENT
 
         # Statistics per image
         # output([xyxy,conf,cls])
@@ -415,7 +415,7 @@ def validate(epoch,config, val_loader, val_dataset, model, criterion, output_dir
     map70 = None
     map75 = None
     if len(stats) and stats[0].any():
-        p, r, ap, f1, ap_class = ap_per_class(*stats, plot=False, save_dir=save_dir, names=names)
+        p, r, ap, f1, ap_class = ap_per_class(*stats, plot=True, save_dir=save_dir, names=names)
         ap50, ap70, ap75,ap = ap[:, 0], ap[:,4], ap[:,5],ap.mean(1)  # [P, R, AP@0.5, AP@0.5:0.95]
         mp, mr, map50, map70, map75, map = p.mean(), r.mean(), ap50.mean(), ap70.mean(),ap75.mean(),ap.mean()
         nt = np.bincount(stats[3].astype(np.int64), minlength=nc)  # number of targets per class
@@ -425,8 +425,8 @@ def validate(epoch,config, val_loader, val_dataset, model, criterion, output_dir
     # Print results
     pf = '%20s' + '%12.3g' * 6  # print format
     print(pf % ('all', seen, nt.sum(), mp, mr, map50, map))
-    #print(map70)
-    #print(map75)
+    print("MAP70 ",map70)
+    print("MAP75 ",map75)
 
     # Print results per class
     if (verbose or (nc <= 20 and not training)) and nc > 1 and len(stats):

@@ -9,6 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
 print(sys.path)
+from thop import profile
 import cv2
 import torch
 import torch.backends.cudnn as cudnn
@@ -17,7 +18,7 @@ import scipy.special
 import numpy as np
 import torchvision.transforms as transforms
 import PIL.Image as image
-
+from fvcore.nn import FlopCountAnalysis
 from lib.config import cfg
 from lib.config import update_config
 from lib.utils.utils import create_logger, select_device, time_synchronized
@@ -28,6 +29,7 @@ from lib.utils import plot_one_box,show_seg_result
 from lib.core.function import AverageMeter
 from lib.core.postprocess import morphological_process, connect_lane
 from tqdm import tqdm
+from ptflops import get_model_complexity_info
 normalize = transforms.Normalize(
         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
     )
@@ -51,7 +53,7 @@ def detect(cfg,opt):
 
     # Load model
     model = get_net(cfg)
-    checkpoint = torch.load(opt.weights, map_location= device)
+    checkpoint = torch.load(opt.weights[0], map_location= device)
     model.load_state_dict(checkpoint['state_dict'])
     model = model.to(device)
     if half:
@@ -91,6 +93,10 @@ def detect(cfg,opt):
         # Inference
         t1 = time_synchronized()
         det_out, da_seg_out,ll_seg_out= model(img)
+        # macs, params = get_model_complexity_info(model, (3, opt.img_size, opt.img_size), as_strings=True,
+        #                                    print_per_layer_stat=True, verbose=False)
+        # print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
+        # print('{:<30}  {:<8}'.format('Number of parameters: ', params))
         t2 = time_synchronized()
         # if i == 0:
         #     print(det_out)
@@ -109,6 +115,7 @@ def detect(cfg,opt):
 
         _, _, height, width = img.shape
         h,w,_=img_det.shape
+        img_det = cv2.cvtColor(img_det, cv2.COLOR_RGB2BGR)
         pad_w, pad_h = shapes[1][1]
         pad_w = int(pad_w)
         pad_h = int(pad_h)
@@ -168,7 +175,7 @@ if __name__ == '__main__':
     parser.add_argument('--weights', nargs='+', type=str, default='weights/End-to-end.pth', help='model.pth path(s)')
     parser.add_argument('--source', type=str, default='inference/videos', help='source')  # file/folder   ex:inference/images
     parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
-    parser.add_argument('--conf-thres', type=float, default=0.25, help='object confidence threshold')
+    parser.add_argument('--conf-thres', type=float, default=0.5, help='object confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='IOU threshold for NMS')
     parser.add_argument('--device', default='cpu', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--save-dir', type=str, default='inference/output', help='directory to save results')
