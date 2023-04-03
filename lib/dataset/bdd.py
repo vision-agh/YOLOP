@@ -5,7 +5,7 @@ from .AutoDriveDataset import AutoDriveDataset
 from .convert import convert, id_dict, id_dict_single
 from tqdm import tqdm
 
-single_cls = True       # just detect vehicle
+single_cls = False       # just detect vehicle
 
 class BddDataset(AutoDriveDataset):
     def __init__(self, cfg, is_train, inputsize, transform=None):
@@ -27,35 +27,33 @@ class BddDataset(AutoDriveDataset):
         label: [cls_id, center_x//256, center_y//256, w//256, h//256] 256=IMAGE_SIZE
         """
         print('building database...')
+        can_print = True
         gt_db = []
         height, width = self.shapes
         for mask in tqdm(list(self.mask_list)):
             mask_path = str(mask)
-            label_path = mask_path.replace(str(self.mask_root), str(self.label_root)).replace(".png", ".json")
             image_path = mask_path.replace(str(self.mask_root), str(self.img_root)).replace(".png", ".jpg")
-            lane_path = mask_path.replace(str(self.mask_root), str(self.lane_root))
-            with open(label_path, 'r') as f:
-                label = json.load(f)
-            data = label['frames'][0]['objects']
-            data = self.filter_data(data)
-            gt = np.zeros((len(data), 5))
-            for idx, obj in enumerate(data):
-                category = obj['category']
-                if category == "traffic light":
-                    color = obj['attributes']['trafficLightColor']
-                    category = "tl_" + color
-                if category in id_dict.keys():
-                    x1 = float(obj['box2d']['x1'])
-                    y1 = float(obj['box2d']['y1'])
-                    x2 = float(obj['box2d']['x2'])
-                    y2 = float(obj['box2d']['y2'])
-                    cls_id = id_dict[category]
-                    if single_cls:
-                         cls_id=0
-                    gt[idx][0] = cls_id
-                    box = convert((width, height), (x1, x2, y1, y2))
-                    gt[idx][1:] = list(box)
-                
+            lane_path= mask_path.replace(str(self.mask_root), str(self.lane_root))
+
+        # for label in tqdm(list(self.label_list)):
+        #     label_path = str(label)
+        #     image_path = label_path.replace(str(self.label_root), str(self.img_root)).replace(".txt", ".png")
+        #     lane_path = mask_path = image_path
+
+            gt = np.zeros((0, 5))
+            # num_lines = sum(1 for line in open(label_path))
+            # gt = np.zeros((num_lines, 5))
+
+
+            # cnt = 0
+            # with open(label_path, 'r') as f:
+            #     for line in f:
+            #         data = line.split(" ")
+            #         gt[cnt][0]= int(data[0])
+            #         gt[cnt][1:] = data[1:]
+            #         cnt+=1
+
+            # print(mask_path)
 
             rec = [{
                 'image': image_path,

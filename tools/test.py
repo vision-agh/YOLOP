@@ -15,6 +15,7 @@ import numpy as np
 from lib.utils import DataLoaderX
 from tensorboardX import SummaryWriter
 
+
 import lib.dataset as dataset
 from lib.config import cfg
 from lib.config import update_config
@@ -81,7 +82,7 @@ def main():
 
     # det_idx_range = [str(i) for i in range(0,25)]
     model_dict = model.state_dict()
-    checkpoint_file = args.weights
+    checkpoint_file = args.weights[0]
     logger.info("=> loading checkpoint '{}'".format(checkpoint_file))
     checkpoint = torch.load(checkpoint_file)
     checkpoint_dict = checkpoint['state_dict']
@@ -92,7 +93,7 @@ def main():
 
     model = model.to(device)
     model.gr = 1.0
-    model.nc = 1
+    model.nc = 5
     print('bulid model finished')
 
     print("begin to load data")

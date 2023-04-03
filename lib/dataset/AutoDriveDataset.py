@@ -44,7 +44,8 @@ class AutoDriveDataset(Dataset):
         self.label_root = label_root / indicator
         self.mask_root = mask_root / indicator
         self.lane_root = lane_root / indicator
-        # self.label_list = self.label_root.iterdir()
+        self.lane_list = self.lane_root.iterdir()
+        self.label_list = self.label_root.iterdir()
         self.mask_list = self.mask_root.iterdir()
 
         self.db = []
@@ -98,11 +99,12 @@ class AutoDriveDataset(Dataset):
         data = self.db[idx]
         img = cv2.imread(data["image"], cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # seg_label = cv2.imread(data["mask"], 0)
+        # seg_label = cv2.imread(data["mask"], 0) # TODO COMMENT
         if self.cfg.num_seg_class == 3:
             seg_label = cv2.imread(data["mask"])
         else:
             seg_label = cv2.imread(data["mask"], 0)
+        seg_label[seg_label!=0]=255
         lane_label = cv2.imread(data["lane"], 0)
         #print(lane_label.shape)
         # print(seg_label.shape)
