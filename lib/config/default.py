@@ -52,10 +52,10 @@ _C.LOSS.LL_IOU_GAIN = 0.2 # lane line iou loss gain
 # DATASET related params
 _C.DATASET = CN(new_allowed=True)
 # _C.DATASET.DATAROOT = '/home/mbaczmanski/MGR/makieta/dataset_objects/YOLODataset/images'       # the path of images folder
-_C.DATASET.DATAROOT = '/home/mbaczmanski/YOLOP/DATASET_2/img'       # the path of images folder
+_C.DATASET.DATAROOT = 'DATASET_2/img'       # the path of images folder
 _C.DATASET.LABELROOT = '/home/mbaczmanski/MGR/makieta/dataset_objects/YOLODataset/labels'      # the path of det_annotations folder
-_C.DATASET.MASKROOT = '/home/mbaczmanski/YOLOP/DATASET_2/drivable'                # the path of da_seg_annotations folder
-_C.DATASET.LANEROOT = '/home/mbaczmanski/YOLOP/DATASET_2/lanes'               # the path of ll_seg_annotations folder
+_C.DATASET.MASKROOT = 'DATASET_2/drivable'                # the path of da_seg_annotations folder
+_C.DATASET.LANEROOT = 'DATASET_2/lanes'               # the path of ll_seg_annotations folder
 _C.DATASET.DATASET = 'BddDataset'
 _C.DATASET.TRAIN_SET = 'train'
 _C.DATASET.TEST_SET = 'val'
