@@ -101,7 +101,8 @@ def detect(cfg,opt):
         # if i == 0:
         #     print(det_out)
         inf_out, _ = det_out
-        inf_time.update(t2-t1,img.size(0))
+        if i>0:
+            inf_time.update(t2-t1,img.size(0))
 
         # Apply NMS
         t3 = time_synchronized()
