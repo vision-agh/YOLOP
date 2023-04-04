@@ -98,6 +98,7 @@ def detect(cfg,opt):
         # print('{:<30}  {:<8}'.format('Computational complexity: ', macs))
         # print('{:<30}  {:<8}'.format('Number of parameters: ', params))
         t2 = time_synchronized()
+        print(t2-t1)
         # if i == 0:
         #     print(det_out)
         inf_out, _ = det_out
