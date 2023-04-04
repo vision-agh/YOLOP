@@ -240,8 +240,8 @@ def validate(epoch,config, val_loader, val_dataset, model, criterion, output_dir
             ll_IoU_seg.update(ll_IoU,img.size(0))
             ll_mIoU_seg.update(ll_mIoU,img.size(0))
             
-            total_loss, head_losses = criterion((train_out,da_seg_out, ll_seg_out), target, shapes,model)   #Compute loss
-            losses.update(total_loss.item(), img.size(0))
+            # total_loss, head_losses = criterion((train_out,da_seg_out, ll_seg_out), target, shapes,model)   #Compute loss
+            losses.update(0, img.size(0))
 
             #NMS
             t = time_synchronized()
